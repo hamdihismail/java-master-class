@@ -10,15 +10,6 @@ public class Car {
     private String regNumber;
     private BigDecimal rentalPricePerDay;
     private Brand brand;
-    public static Car[] cars;
-    public static int lastIndex;
-
-    static {
-        cars = new Car[10];
-        lastIndex = 0;
-        cars[lastIndex++] = new Car(UUID.fromString("8ca51d2b-aaaf-4bf2-834a-e02964e10fc3"),"J88H6",new BigDecimal("22.5"),Brand.TESLA,true);
-        cars[lastIndex++] = new Car(UUID.fromString("b10d126a-3608-4980-9f9c-aa179f5cebc3"),"EER88R",new BigDecimal("20.45"),Brand.TOYOTA,false);
-    }
 
     public Car() {}
 

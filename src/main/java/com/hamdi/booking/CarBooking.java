@@ -17,8 +17,6 @@ public class CarBooking {
     private BigDecimal price;
     private BookingStatus status;
 
-    public static CarBooking[] carBookings;
-    public static int lastIndex;
 
     @Override
     public String toString() {
@@ -32,13 +30,6 @@ public class CarBooking {
                 ", status=" + status +
                 ", bookedAt=" + bookedAt +
                 '}';
-    }
-
-    static {
-        carBookings = new CarBooking[10];
-        lastIndex = 0;
-        carBookings[lastIndex++] = new CarBooking(UUID.fromString("8ca51d2b-aaaf-4bf2-834a-e02964e10fc3"),User.users[User.lastIndex-2],Car.cars[Car.lastIndex-2], LocalDate.now(),LocalDate.now().plusDays(3),Car.cars[Car.lastIndex-2].getRentalPricePerDay().multiply(new BigDecimal("3")),BookingStatus.ACTIVE,LocalDateTime.now());
-        carBookings[lastIndex++] = new CarBooking(UUID.fromString("b10d126a-3608-4980-9f9c-aa179f5cebc3"),User.users[User.lastIndex-1],Car.cars[Car.lastIndex-1], LocalDate.now(),LocalDate.now().plusDays(5),Car.cars[Car.lastIndex-1].getRentalPricePerDay().multiply(new BigDecimal("5")),BookingStatus.ACTIVE,LocalDateTime.now());
     }
 
     public CarBooking(UUID id,User user, Car car, LocalDate startDate, LocalDate endDate, BigDecimal price, BookingStatus status, LocalDateTime bookedAt) {

@@ -1,7 +1,4 @@
 package com.hamdi;
-// TODO 1. create a new branch called initial-implementation
-// TODO 2. create a package with your name. i.e com.franco and move this file inside the new package
-// TODO 3. implement https://amigoscode.com/learn/java-cli-build/lectures/3a83ecf3-e837-4ae5-85a8-f8ae3f60f7f5
 
 import com.hamdi.booking.CarBooking;
 import com.hamdi.booking.CarBookingService;
@@ -20,10 +17,10 @@ import java.util.UUID;
 public class Main {
 
     public static void main(String[] args){
-        System.out.println(Arrays.toString(Car.cars));
-        System.out.println(Arrays.toString(CarBooking.carBookings));
         Scanner scanner = new Scanner(System.in);
         CarBookingService carBookingService = new CarBookingService();
+        CarService carService = new CarService();
+        UserService userService = new UserService();
         String options = """
                 1. Book a Car
                 2. Delete Booking
@@ -46,7 +43,6 @@ public class Main {
             }
             switch (choice){
                 case 1:
-                    UserService userService = new UserService();
                     System.out.println("Please enter the UserId: ");
                     UUID userId;
                     try {
@@ -143,7 +139,6 @@ public class Main {
                     } catch (Exception e){
                         System.out.println(e.getMessage());
                         System.out.println("Booking unsuccessful!");
-                        e.printStackTrace();
                     }
                     break;
                 case 2:
@@ -159,56 +154,69 @@ public class Main {
                     } catch (IllegalArgumentException e){
                         System.out.println("***Invalid BookingID***\n");
                         break;
+                    } catch (NullPointerException e){
+                        System.out.println("***No bookings in system***");
+                        System.out.println(Arrays.toString(carBookingService.viewAllBookings()));
+                        break;
                     }
                 case 3:
                     System.out.println("Please enter UserID: ");
                     try {
-                        boolean result = carBookingService.viewUserBookings(UUID.fromString(scanner.next()));
-                        if(!result){
-                            System.out.println("***Could not find bookings, please verify UserID***\n");
-                            break;
-                        }
+                        CarBooking[] userBookings = carBookingService.viewUserBookings(UUID.fromString(scanner.next()));
+                        System.out.println("Bookings for: "+userBookings[0].getUser().getName());
+                        System.out.println(Arrays.toString(userBookings)+"\n");
+                        break;
+                    } catch (NullPointerException e){
+                        System.out.println("***No bookings found***\n");
+//                        e.printStackTrace();
                         break;
                     } catch (IllegalArgumentException e){
                         System.out.println("***Invalid UserID***\n");
                         break;
                     }
                 case 4:
-                    boolean result = carBookingService.viewAllBookings();
-                    if(!result){
+                    try {
+                        CarBooking[] carBooking = carBookingService.viewAllBookings();
+                        System.out.println("Bookings: \n");
+                        if(carBooking[0] != null){
+                            for (int i = 0; i < carBooking.length; i++) {
+                                if(carBooking[i] != null) {
+                                    System.out.println("#"+i+": "+carBooking[i]+"\n");
+                                }
+                            }
+                        }
+                        else {
+                            throw new NullPointerException();
+                        };
+                        break;
+                    } catch (NullPointerException e){
                         System.out.println("***Could not find any bookings in the system***\n");
+                        break;
                     }
-                    break;
                 case 5:
-                    result = carBookingService.viewAvailableCars();
-                    if(!result){
+                    try {
+                        System.out.println("Available cars: "+Arrays.toString(carBookingService.viewAvailableCars())+"\n");
+                        break;
+                    } catch (NullPointerException e){
                         System.out.println("***Could not find any available cars in the system***\n");
+                        break;
                     }
-                    break;
                 case 6:
-                    result = false;
-                    for (Car car : new CarService().getAll()) {
-                        if((car != null)&&(car.isElectric())){
-                            System.out.println(car+"\n");
-                            result = true;
-                        }
-                    }
-                    if(!result){
+                    try {
+                        System.out.println(Arrays.toString(carService.getElectric())+"\n");
+                        break;
+                    } catch (NullPointerException e){
                         System.out.println("***Could not find any electric cars in system***\n");
+                        break;
                     }
-                    break;
                 case 7:
-                    result = false;
-                    for (User user : new UserService().getAll()) {
-                        if(user != null){
-                            System.out.println(user);
-                            result = true;
-                        }
-                    }
-                    if(!result){
+                    try {
+                        System.out.println(Arrays.toString(userService.getAll()));
+                        break;
+                    } catch (NullPointerException e){
                         System.out.println("***There are currently no users in the system***\n");
+                        break;
                     }
-                    break;
                 case 8:
                    return;
                 default:

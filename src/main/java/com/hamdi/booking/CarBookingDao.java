@@ -1,49 +1,66 @@
 package com.hamdi.booking;
 
 
-import com.hamdi.car.Car;
+import com.hamdi.user.User;
+import com.hamdi.utility.ArrayHelper;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 public class CarBookingDao {
-    public boolean addCarBooking(CarBooking carBookings){
-        if(!carBookingsExists(carBookings)){//if carBookings doesn't exist, add to array and increment CarBooking.lastIndex
-            CarBooking.carBookings[CarBooking.lastIndex] = carBookings;
-            ++CarBooking.lastIndex;
+    private static CarBooking[] carBookings = new CarBooking[1];
+    private static int lastIndex;
+    private ArrayHelper arrayHelper = new ArrayHelper();
+    public boolean saveBooking(CarBooking booking){
+        if(!carBookingsExists(booking)){//if carBookings doesn't exist, add to array and increment CarBooking.lastIndex
+            carBookings = arrayHelper.add(carBookings,booking,lastIndex++);
             return true;
         }
         return false;
     }
 
-    public boolean deleteCarBooking(UUID id){
-        for (int i = 0; i < CarBooking.carBookings.length; i++) {
-           if((CarBooking.carBookings[i] != null) && (CarBooking.carBookings[i].getId().equals(id))){
-               CarBooking.carBookings[i] = null;
-               return true;
-           }
+    public boolean deleteBooking(UUID id){
+        boolean result = false;
+        int length = carBookings.length;
+        CarBooking[] temp = new CarBooking[length];
+        int nextIndex = 0;
+        for (int i = 0; i < carBookings.length; i++) {
+                if(carBookings[i] != null){
+                    if(!carBookings[i].getId().equals(id)){
+                        temp[nextIndex++] = carBookings[i];
+                    } else {
+                        System.out.println("deleted: "+carBookings[i].getId());
+                        result = true;
+                    }
+                }
         }
-        return false;
+        for (int i = 0; i < temp.length; i++) {
+            if(temp[i] != null){
+                lastIndex = i+1;
+            }
+        }
+        carBookings = temp;
+        return result;
     }
 
-    public CarBooking getCarBooking(UUID id){
-        for (CarBooking carBookings : CarBooking.carBookings) {
-            if(carBookings.getId().equals(id)){
-                return carBookings;
+    public CarBooking findBookingById(UUID id){
+        for (CarBooking booking : getBookings()) {
+            if(booking.getId().equals(id)){
+                return booking;
             }
         }
-//        throw new Exception("CarBooking not found");
         return null;
     }
-    public CarBooking[] getAllCarBookings(){
-        CarBooking[] bookings = CarBooking.carBookings;
-        return bookings;
+    public CarBooking[] getBookings(){
+        CarBooking[] result = new CarBooking[lastIndex];
+        for (int i = 0; i < lastIndex; i++) {
+            result[i] = carBookings[i];
+        }
+        return result;
     }
-    private boolean carBookingsExists(CarBooking carBookings){
-        for (CarBooking x : CarBooking.carBookings) {
-            if(x == null){
-                continue;
-            }
-            if(x.equals(carBookings)){
+    private boolean carBookingsExists(CarBooking carBooking){
+        for (CarBooking booking : getBookings()) {
+            if((booking !=null) && (booking.equals(carBooking))){
                 return true;
             }
         }

@@ -7,7 +7,7 @@ public class UserService {
 
    public User lookUp(UUID id) {
        try {
-           return userDao.getUser(id);
+           return userDao.findUserById(id);
        } catch (Exception e){
            System.out.println("User not found!\n");
            return null;
@@ -15,7 +15,7 @@ public class UserService {
    }
 
    public User[] getAll(){
-       return userDao.getAllUsers();
+       return userDao.getUsers();
    }
 
 }
